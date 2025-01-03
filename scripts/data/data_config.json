@@ -1,0 +1,9 @@
+{
+    "depth_min": 0,
+    "depth_max": 149,
+    "width_min": 38,
+    "width_max": 215,
+    "height_min": 10,
+    "height_max": 227,
+    "skipped_ids": []
+}

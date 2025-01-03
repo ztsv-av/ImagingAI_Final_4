@@ -16,14 +16,10 @@ def setGlobalSeed() -> None:
     np.random.seed(SEED)
     # set seed for PyTorch
     torch.manual_seed(SEED)
-    # ensures PyTorch operations on the CPU are deterministic
-    torch.use_deterministic_algorithms(True)
     # set seed for PyTorch's CUDA operations, if CUDA is available
     if torch.cuda.is_available():
         torch.cuda.manual_seed(SEED)
         torch.cuda.manual_seed_all(SEED)  # if multiple GPUs are being used
-    # ensure deterministic behavior for cuDNN
-    torch.backends.cudnn.deterministic = True
 
 def writeTXT(data, save_path) -> None:
     """

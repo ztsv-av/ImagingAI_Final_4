@@ -6,7 +6,7 @@ from scripts.utils.vars import (
     DATA_PATH, TRAIN_IDS_PATH, VAL_IDS_PATH, TEST_IDS_PATH,
     TRAIN_PERCENTAGE, VAL_PERCENTAGE
 )
-from scripts.utils.utils import writeTXT
+from scripts.utils.helpers import writeTXT
 
 def getPatientIDs():
     """
