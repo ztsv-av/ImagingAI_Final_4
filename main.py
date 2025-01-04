@@ -10,7 +10,7 @@ def run():
     available_models = ["UNet", "AttentionUNet", "UNETR", "SwinUNETR", "HighResNet"] # list of available models to train/test
     chosen_model = "UNet"
     kfold = False # not kfold training
-    test = False # if to test or not
+    test = True # if to test or not
     if test:
         # start testing pipeline
         testingPipeline(modalities=modalities, model_name=chosen_model, ensemble=kfold)

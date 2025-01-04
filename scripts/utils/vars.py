@@ -6,7 +6,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))  # This gets the direc
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, "../../"))  # Adjust the path to the project root
 
 # data paths
-DATA_PATH = os.path.join(PROJECT_ROOT, "data", "BraTS2021_Training_Data")
+DATA_PATH = os.path.join(PROJECT_ROOT, "data", "BraTS2021_Training_Data_Cropped")
 CROPPED_DATA_PATH = os.path.join(PROJECT_ROOT, "data", "BraTS2021_Training_Data_Cropped")
 PATIENT_FOLDER_NAME = "BraTS2021_"
 PATIENTS_CROPPING_IDXS_PATH = os.path.join(PROJECT_ROOT, "scripts/data", "patients_cropping_idxs.json")
@@ -25,6 +25,9 @@ VAL_PERCENTAGE = 0.15
 BEST_MODEL_PATH = os.path.join(PROJECT_ROOT, "scripts", "model", "best_model.pth")
 CHECKPOINTS_PATH = os.path.join(PROJECT_ROOT, "scripts", "model", "checkpoints")
 
+# predictions
+PREDICTIONS_DIR = os.path.join(PROJECT_ROOT, "predictions")
+
 # seed
 SEED = 1
 
@@ -33,7 +36,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # training variables
 KFOLD_SPLITS = 3
-EPOCHS = 200
-BATCH_SIZE = 24
+EPOCHS = 300
+BATCH_SIZE = 10
 LR = 0.001
 PATIENCE = 8

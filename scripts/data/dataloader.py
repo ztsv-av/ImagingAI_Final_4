@@ -4,7 +4,7 @@ from monai.transforms import (
     MapTransform, Compose, LoadImaged, ToTensord, ConcatItemsd, 
     Orientationd, Spacingd, EnsureChannelFirstd,
     ConvertToMultiChannelBasedOnBratsClassesd,
-    RandRotate90d, RandFlipd, SpatialPadd,
+    RandFlipd, SpatialPadd,
     ScaleIntensityd, NormalizeIntensityd, 
     RandGaussianNoised, RandBiasFieldd
 )
@@ -72,7 +72,7 @@ def defineTransforms(modalities: list, train: bool = True, swin: bool = False):
         ])
     transforms.extend([
         NormalizeIntensityd(keys="modalities", nonzero=True, channel_wise=True), # standardization
-        SpatialPadd(keys=["modalities", "mask"], spatial_size=(224, 192, 144), mode="constant", value=0), # make dimensions divisible by 2^5 for UNet compatibility
+        SpatialPadd(keys=["modalities", "mask"], spatial_size=(192, 224, 144), mode="constant", value=0), # make dimensions divisible by 2^5 for UNet compatibility
         ToTensord(keys=["modalities", "mask"]) # convert to tensors
     ])
     if swin:

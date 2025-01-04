@@ -188,26 +188,3 @@ def loadKFoldUNets(modalities: list, model_name: str):
         models.append(model)
         print(f"Model weights loaded successfully from {model_path}")
     return models
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-t1: 68
-t1_t2_flair: 64
-fold_1: 27
-fold_2: 65
-fold_3: 65

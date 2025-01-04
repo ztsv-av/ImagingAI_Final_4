@@ -56,7 +56,7 @@ def plotSlice(patient_id: str, modality: str, modality_slice: np.array, seg_slic
     else:
         plt.show()
 
-def visualizePatientData(patient_id: str = "00000", modality: str = "t1", slice_idx: int = None, create_gif: bool = False):
+def visualizePatientData(patient_id: str = "00000", modality: str = "t1", slice_idx: int = None, save_plot: bool = False, create_gif: bool = False):
     """
     Visualize a patient's modality image and corresponding segmentation mask.
     Either plot only specific slice or create a gif going through all the slices.
@@ -65,6 +65,7 @@ def visualizePatientData(patient_id: str = "00000", modality: str = "t1", slice_
         - patient_id (str): ID of the patient.
         - modality (str): The MRI modality to visualize ('t1', 't1ce', 't2', 'flair').
         - slice_idx (int): Slice index to plot.
+        - save_plot (bool): Whether to save plot or not.
         - create_gif (bool): Whether to create a gif showing whole modality .nii file and segmentaton mask.
     """
     # define paths to patient .nii data
@@ -117,10 +118,13 @@ def visualizePatientData(patient_id: str = "00000", modality: str = "t1", slice_
             slice_idx = 72
         modality_slice = modality_img[:, :, slice_idx + 5]
         seg_slice = seg_img[:, :, slice_idx + 5]
-        plot_savepath = f"../../plots/{patient_id}/{modality}_{slice_idx}.jpg"
-        plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=plot_savepath)
+        if save_plot:
+            plot_savepath = f"../../plots/{patient_id}/{modality}_{slice_idx}.jpg"
+            plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=plot_savepath)
+        else:
+            plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=save_plot)
 
-def visualizePatientAugmentedData(patient_id: str = "00000", modality: str = "t1", slice_idx: int = None, create_gif: bool = False):
+def visualizePatientAugmentedData(patient_id: str = "00000", modality: str = "t1", slice_idx: int = None, save_plot: bool = False, create_gif: bool = False):
     """
     Visualize a patient's augmented modality image and corresponding segmentation mask.
     Either plot only specific slice or create a gif going through all the slices.
@@ -129,6 +133,7 @@ def visualizePatientAugmentedData(patient_id: str = "00000", modality: str = "t1
         - patient_id (str): Patient ID.
         - modality (str): Modality to visualize.
         - slice_idx (int): Specific slice index to visualize. If None, use the middle slice.
+        - save_plot (bool): Whether to save plot or not.
         - create_gif (bool): Whether to create a GIF of all slices.
     """
     # prepare data in MONAI format
@@ -189,8 +194,11 @@ def visualizePatientAugmentedData(patient_id: str = "00000", modality: str = "t1
             slice_idx = 72
         modality_slice = modality_img[:, :, slice_idx]
         seg_slice = seg_img[:, :, slice_idx]
-        plot_savepath = f"../../plots/{patient_id}/{modality}_{slice_idx}_transformed.jpg"
-        plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=plot_savepath)
+        if save_plot:
+            plot_savepath = f"../../plots/{patient_id}/{modality}_{slice_idx}_transformed.jpg"
+            plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=plot_savepath)
+        else:
+            plotSlice(patient_id, modality, modality_slice, seg_slice, slice_idx, save_path=save_plot)
 
 def countLabels():
     """
