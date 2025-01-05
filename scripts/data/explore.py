@@ -12,7 +12,7 @@ from IPython.display import clear_output
 from torch.utils.data import DataLoader
 from monai.data import Dataset as MonaiDataset
 
-from scripts.utils.vars import DATA_PATH, CROPPED_DATA_PATH, PATIENT_FOLDER_NAME
+from scripts.utils.vars import DATA_PATH, PATIENT_FOLDER_NAME
 from scripts.data.dataloader import defineTransforms
 
 def plotSlice(patient_id: str, modality: str, modality_slice: np.array, seg_slice: np.array, slice_idx: int, save_path: str = False):
@@ -31,22 +31,34 @@ def plotSlice(patient_id: str, modality: str, modality_slice: np.array, seg_slic
     # create figure
     fig, ax = plt.subplots(1, 2, figsize=(12, 6))
     title = f"Patient ID: {patient_id}, Modality: {modality.upper()}, Slice: {slice_idx}"
-
     fig.suptitle(title, fontsize=16)
     # modality image
     ax[0].imshow(modality_slice, cmap="gray")
     ax[0].set_title(f"{modality.upper()} Image")
     ax[0].axis("off")
     # segmentation mask
-    cmap = plt.get_cmap("jet")
-    norm = mcolors.Normalize(vmin=0, vmax=3)  # Normalization for class values
-    ax[1].imshow(seg_slice, cmap=cmap, norm=norm)
+    class_labels = {
+        0: "Background",
+        1: "Necrotic Core",
+        2: "Peritumoral Edematous",
+        3: "Enhancing Tumor",
+    }
+    class_colors = {
+        0: "#a7a7a7",
+        1: "#00d5ff",
+        2: "#ffe600",
+        3: "#800000",
+    }
+    color_list = [class_colors[i] for i in range(len(class_labels))]
+    cmap = mcolors.ListedColormap(color_list)
+    ax[1].imshow(seg_slice, cmap=cmap, vmin=0, vmax=3)
     ax[1].set_title("Segmentation Mask")
     ax[1].axis("off")
     # legend
-    class_labels = {0: "Background", 1: "Necrotic Core", 2: "Peritumoral Edematous", 3: "Enhancing Tumor"}
-    class_colors = {class_value: cmap(norm(class_value)) for class_value in class_labels.keys()}
-    patches = [mpatches.Patch(color=color, label=label) for label, color in zip(class_labels.values(), class_colors.values())]
+    patches = [
+        mpatches.Patch(color=class_colors[i], label=class_labels[i])
+        for i in range(len(class_labels))
+    ]
     ax[1].legend(handles=patches, loc="upper right", title="Classes")
     # save the plot if save_path is provided (used for gif creation)
     if save_path:
@@ -139,9 +151,9 @@ def visualizePatientAugmentedData(patient_id: str = "00000", modality: str = "t1
     # prepare data in MONAI format
     data_dicts = [
         {
-            f"modality_{0}": f"{CROPPED_DATA_PATH}/{PATIENT_FOLDER_NAME}{patient_id}/{PATIENT_FOLDER_NAME}{patient_id}_{modality}.nii.gz"
+            f"modality_{0}": f"{DATA_PATH}/{PATIENT_FOLDER_NAME}{patient_id}/{PATIENT_FOLDER_NAME}{patient_id}_{modality}.nii.gz"
         } | {
-            "mask": f"{CROPPED_DATA_PATH}/{PATIENT_FOLDER_NAME}{patient_id}/{PATIENT_FOLDER_NAME}{patient_id}_seg.nii.gz"
+            "mask": f"{DATA_PATH}/{PATIENT_FOLDER_NAME}{patient_id}/{PATIENT_FOLDER_NAME}{patient_id}_seg.nii.gz"
         }
     ]
     # define transforms for visualization
@@ -208,10 +220,10 @@ def countLabels():
         - data_path (str): Path to the folder containing data folders for each patient storing modality images and segmentation masks.
     """
     counts_dict = {}
-    for pdir in tqdm(os.listdir(CROPPED_DATA_PATH), "Processing patients segmentation masks..."):
+    for pdir in tqdm(os.listdir(DATA_PATH), "Processing patients segmentation masks..."):
         # construct the path to the segmentation image
         seg_file = os.path.join(
-            CROPPED_DATA_PATH,
+            DATA_PATH,
             f"{pdir}",
             f"{pdir}_seg.nii.gz"
         )
