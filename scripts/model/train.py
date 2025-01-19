@@ -37,10 +37,9 @@ def trainingPipeline(modalities: list, model_name: str) -> None:
         to_onehot_y=False,
         sigmoid=True, # raw outputs -> sigmoid
         include_background=True,
-        reduction="mean", # reduction over the batch
-        smooth_nr=1e-5, # avoid division by zero
+        smooth_nr=0,
         smooth_dr=1e-5, # avoid division by zero
-        squared_pred=False # do not square predictions
+        squared_pred=False # square predictions
     )
     # metric functions
     metric_fn = DiceMetric(
@@ -63,7 +62,7 @@ def trainingPipeline(modalities: list, model_name: str) -> None:
     # learning rate scheduler
     scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
         optimizer,
-        T_0=10, # number of epochs for the first cycle
+        T_0=20, # number of epochs for the first cycle
         T_mult=2, # factor by which the cycle length increases after each restart
         eta_min=1e-6 # minimum learning rate
     )
@@ -76,7 +75,7 @@ def trainingPipeline(modalities: list, model_name: str) -> None:
         epochs_no_improve = checkpoint["epochs_no_improve"]
     else:
         start_epoch = 0
-        best_metric = float("inf")
+        best_metric = float("-inf")
         best_metric_epoch = -1
         epochs_no_improve = 0
     # TensorBoard writer will continue itself if checkpoint exists
@@ -108,8 +107,8 @@ def trainingPipeline(modalities: list, model_name: str) -> None:
         # print results
         print(f"  Epoch {epoch + 1} Train Loss: {train_loss:.4f} Learning Rate: {current_lr:.4f} Val Loss: {val_loss:.4f} Val Metric: {val_dice:.4f}")
         # check if model improved
-        if val_loss < best_metric:
-            best_metric = val_loss
+        if val_dice > best_metric:
+            best_metric = val_dice
             best_metric_epoch = epoch + 1
             epochs_no_improve = 0
             # save best model
@@ -172,10 +171,9 @@ def trainingPipelineKFold(modalities: list, model_name: str, fold_idx: int) -> N
             to_onehot_y=False,
             sigmoid=True, # raw outputs -> sigmoid
             include_background=True,
-            reduction="mean", # reduction over the batch
-            smooth_nr=1e-5, # numerator smoothing to avoid division by zero
+            smooth_nr=0,
             smooth_dr=1e-5, # denominator smoothing to avoid division by zero
-            squared_pred=False # do not square predictions
+            squared_pred=True # square predictions
         )
         # metric functions
         metric_fn = DiceMetric(
@@ -197,7 +195,7 @@ def trainingPipelineKFold(modalities: list, model_name: str, fold_idx: int) -> N
         # learning rate scheduler
         scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
             optimizer,
-            T_0=10, # number of epochs for the first cycle
+            T_0=20, # number of epochs for the first cycle
             T_mult=2, # factor by which the cycle length increases after each restart
             eta_min=1e-6 # minimum learning rate
         )
@@ -210,7 +208,7 @@ def trainingPipelineKFold(modalities: list, model_name: str, fold_idx: int) -> N
             epochs_no_improve = checkpoint["epochs_no_improve"]
         else:
             start_epoch = 0
-            best_metric = float("inf")
+            best_metric = float("-inf")
             best_metric_epoch = -1
             epochs_no_improve = 0
         # path to save the current best model
@@ -240,8 +238,8 @@ def trainingPipelineKFold(modalities: list, model_name: str, fold_idx: int) -> N
             # print results
             print(f"    Fold {current_fold_idx+1}, Epoch {epoch + 1}, Train Loss: {train_loss:.4f}, Learning Rate:{current_lr:.4f}, Val Loss: {val_loss:.4f}, Val {metric_fn.name}: {val_dice:.4f}")
             # check if model improved
-            if val_loss < best_metric:
-                best_metric = val_loss
+            if val_dice > best_metric:
+                best_metric = val_dice
                 best_metric_epoch = epoch + 1
                 epochs_no_improve = 0
                 # save the best model

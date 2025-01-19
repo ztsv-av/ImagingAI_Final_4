@@ -37,6 +37,6 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # training variables
 KFOLD_SPLITS = 3
 EPOCHS = 300
-BATCH_SIZE = 10
+BATCH_SIZE = 8
 LR = 0.001
-PATIENCE = 8
+PATIENCE = 20
